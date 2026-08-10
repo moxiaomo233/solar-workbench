@@ -48,6 +48,10 @@
         <p id="pageSub">加载中…</p>
       </div>
       <div class="topbar-actions">
+        <button class="icon-btn" id="btnSync" title="云同步">
+          <svg viewBox="0 0 24 24" class="ic"><path d="M7.5 18.5a4.5 4.5 0 01-.5-8.97 6 6 0 0111.64-1.2A4 4 0 0118 18.5z"/></svg>
+          <span class="sync-dot s-off" id="syncDot"></span>
+        </button>
         <button class="icon-btn" id="btnSearch" title="全局搜索 (Ctrl+K)">
           <svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
         </button>
@@ -79,6 +83,7 @@
 <script src="assets/js/store.js"></script>
 <script src="assets/js/ai.js"></script>
 <script src="assets/js/ui.js"></script>
+<script src="assets/js/sync.js"></script>
 <script src="assets/js/views/dashboard.js"></script>
 <script src="assets/js/views/todos.js"></script>
 <script src="assets/js/views/notes.js"></script>
