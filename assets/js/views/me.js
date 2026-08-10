@@ -57,9 +57,21 @@
         '<button class="btn btn-primary" data-save-set>保存设置</button>' +
         '</div></div>';
 
+      h += '<div class="sec"><div class="sec-head"><span class="sec-bar"></span><h2>云同步</h2></div>' +
+        '<div class="card" style="padding:15px">' +
+        '<div class="mb14" data-sync-status>' + (A.sync ? A.sync.statusHTML() : '<span class="muted">未启用</span>') + '</div>' +
+        '<div class="small muted mb14">开启后数据会存到你 GitHub 账号下的<b>私有仓库</b>，电脑和手机填同一个令牌就能自动同步，约 10 秒内互相可见。' +
+        '两台设备各改各的互不覆盖；同一条内容被同时修改时，以最后保存的为准。</div>' +
+        '<div class="flex gap6" style="flex-wrap:wrap">' +
+        '<button class="btn btn-primary" data-sync-panel>云同步设置</button>' +
+        '<button class="btn" data-sync-now>立即同步</button>' +
+        '<button class="btn" data-sync-pull>用云端覆盖本机</button>' +
+        '<button class="btn" data-sync-push>用本机覆盖云端</button>' +
+        '</div></div></div>';
+
       h += '<div class="sec"><div class="sec-head"><span class="sec-bar"></span><h2>数据与安全</h2></div>' +
         '<div class="card" style="padding:15px">' +
-        '<div class="small muted mb14">数据保存在本机浏览器中（通讯录与提成数据不上传）。同一浏览器多个标签页会实时同步；建议定期导出备份。</div>' +
+        '<div class="small muted mb14">未开启云同步时，数据只保存在本机浏览器中。同一浏览器多个标签页会实时同步；建议定期导出备份。</div>' +
         '<div class="flex gap6" style="flex-wrap:wrap">' +
         '<button class="btn" data-export>导出备份（JSON）</button>' +
         '<button class="btn" data-import>导入备份</button>' +
@@ -73,6 +85,27 @@
     mount: function (root) {
       A.on(root, 'click', '[data-go]', function (e, el) { A.go(el.getAttribute('data-go')); });
 
+      A.on(root, 'click', '[data-sync-panel]', function () { A.sync && A.sync.panel(); });
+      A.on(root, 'click', '[data-sync-now]', function () {
+        if (!A.sync) return;
+        var c = A.sync.cfg();
+        if (!c.token || !c.owner) { A.toast('请先在「云同步设置」里连接', 'warn'); return; }
+        A.toast('正在同步…');
+        A.sync.now().then(function () { A.toast('同步完成', 'ok'); });
+      });
+      A.on(root, 'click', '[data-sync-pull]', function () {
+        if (!A.sync) return;
+        var c = A.sync.cfg();
+        if (!c.token || !c.owner) { A.toast('请先在「云同步设置」里连接', 'warn'); return; }
+        A.sync.forcePull();
+      });
+      A.on(root, 'click', '[data-sync-push]', function () {
+        if (!A.sync) return;
+        var c = A.sync.cfg();
+        if (!c.token || !c.owner) { A.toast('请先在「云同步设置」里连接', 'warn'); return; }
+        A.sync.forcePush();
+      });
+
       A.on(root, 'click', '[data-editme]', function () {
         var set = A.store.state().settings;
         A.modal({
@@ -84,7 +117,7 @@
           onMount: function (m, close) {
             A.$('[data-ok]', m).onclick = function () {
               var v = A.f.read(m);
-              Object.assign(A.store.state().settings, { userName: v.userName, company: v.company, role: v.role });
+              Object.assign(A.store.state().settings, { userName: v.userName, company: v.company, role: v.role, _ua: Date.now() });
               A.store.save(); close(); A.toast('已保存', 'ok');
             };
           }
@@ -98,6 +131,7 @@
         set.dnd = { on: !!v.dndOn, from: v.dndFrom, to: v.dndTo };
         set.commissionLock = v.commissionLock || '';
         set.lockOn = !!v.lockOn && !!set.commissionLock;
+        set._ua = Date.now();
         A.store.save();
         A.lockCommission && A.lockCommission();
         A.toast('设置已保存', 'ok');
