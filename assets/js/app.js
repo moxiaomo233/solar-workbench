@@ -215,6 +215,7 @@
     A.$('#btnQuickAdd').onclick = quickAddMenu;
     A.$('#btnSearch').onclick = searchModal;
     A.$('#btnBell').onclick = function () { A.alertCenter(); };
+    A.$('#btnSync').onclick = function () { A.sync && A.sync.panel(); };
     A.$('#btnMobileMenu').onclick = function () { A.go('me'); };
 
     // 快捷键
@@ -262,6 +263,9 @@
     });
 
     pushReminders();
+
+    // 云同步
+    if (A.sync) { try { A.sync.init(); } catch (e) { console.error(e); } }
 
     // PWA
     if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
