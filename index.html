@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>工作助手 · 光伏项目助理</title>
+<meta name="theme-color" content="#1e40af">
+<meta name="description" content="分布式光伏项目助理的一站式工作管理工具——待办不漏、项目不乱、提成不错。">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231e40af'/%3E%3Cpath d='M14 40l8-20h20l8 20z' fill='%23fff' opacity='.9'/%3E%3Cpath d='M14 40h36v5H14z' fill='%23f97316'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ========== 左侧导航（平板/电脑） ========== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 64 64" width="26" height="26" aria-hidden="true">
+          <path d="M12 42l9-24h22l9 24z" fill="#ffffff" opacity=".92"/>
+          <path d="M12 42h40v6H12z" fill="#f97316"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">工作助手</div>
+        <div class="brand-sub">光伏项目助理</div>
+      </div>
+    </div>
+
+    <nav class="side-nav" id="sideNav"></nav>
+
+    <div class="side-quick" id="sideQuick"></div>
+
+    <div class="side-foot">
+      <div class="side-foot-tip"><b>Ctrl+N</b> 随手记 · <b>Ctrl+K</b> 搜索</div>
+    </div>
+  </aside>
+
+  <!-- ========== 主区域 ========== -->
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn only-mobile" id="btnMobileMenu" title="更多模块">
+        <svg viewBox="0 0 24 24" class="ic"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="topbar-title">
+        <h1 id="pageTitle">今日工作台</h1>
+        <p id="pageSub">加载中…</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="btnSearch" title="全局搜索 (Ctrl+K)">
+          <svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        </button>
+        <button class="icon-btn" id="btnBell" title="提醒中心">
+          <svg viewBox="0 0 24 24" class="ic"><path d="M18 16v-5a6 6 0 10-12 0v5l-2 3h16z"/><path d="M10 21h4"/></svg>
+          <span class="badge hidden" id="bellBadge">0</span>
+        </button>
+        <button class="btn btn-primary btn-add" id="btnQuickAdd">
+          <svg viewBox="0 0 24 24" class="ic"><path d="M12 5v14M5 12h14"/></svg>
+          <span class="only-desktop-inline">新建</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="page" id="page"></div>
+  </div>
+
+  <!-- ========== 底部导航（手机） ========== -->
+  <nav class="tabbar" id="tabbar"></nav>
+</div>
+
+<div id="modal-root"></div>
+<div id="sheet-root"></div>
+<div class="toast-root" id="toast-root"></div>
+<div class="drop-hint" id="dropHint"><div class="drop-hint-inner">松手即可存入随手记</div></div>
+
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/seed.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/ai.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/views/dashboard.js"></script>
+<script src="assets/js/views/todos.js"></script>
+<script src="assets/js/views/notes.js"></script>
+<script src="assets/js/views/projects.js"></script>
+<script src="assets/js/views/sitelogs.js"></script>
+<script src="assets/js/views/contacts.js"></script>
+<script src="assets/js/views/docs.js"></script>
+<script src="assets/js/views/commission.js"></script>
+<script src="assets/js/views/reports.js"></script>
+<script src="assets/js/views/me.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
