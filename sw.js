@@ -1,5 +1,8 @@
-/* 离线缓存：现场无信号也能打开使用 */
-var CACHE = 'pv-workbench-v1';
+/* 离线缓存：现场无信号也能打开使用
+ * v2：改为「网络优先 + 缓存兜底」，保证新版本能及时推送到手机；
+ *     跨域请求（api.github.com 等）一律放行，绝不缓存，否则云同步会读到旧数据。
+ */
+var CACHE = 'pv-workbench-v2';
 var ASSETS = [
   './',
   './index.html',
@@ -10,6 +13,7 @@ var ASSETS = [
   './assets/js/store.js',
   './assets/js/ai.js',
   './assets/js/ui.js',
+  './assets/js/sync.js',
   './assets/js/views/dashboard.js',
   './assets/js/views/todos.js',
   './assets/js/views/notes.js',
@@ -24,7 +28,12 @@ var ASSETS = [
 ];
 
 self.addEventListener('install', function (e) {
-  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(ASSETS); }).then(function () { return self.skipWaiting(); }));
+  e.waitUntil(
+    caches.open(CACHE)
+      .then(function (c) { return c.addAll(ASSETS); })
+      .catch(function () { })
+      .then(function () { return self.skipWaiting(); })
+  );
 });
 
 self.addEventListener('activate', function (e) {
@@ -34,14 +43,27 @@ self.addEventListener('activate', function (e) {
 });
 
 self.addEventListener('fetch', function (e) {
-  if (e.request.method !== 'GET') return;
+  var req = e.request;
+  if (req.method !== 'GET') return;
+
+  var url;
+  try { url = new URL(req.url); } catch (err) { return; }
+
+  // 跨域（GitHub API 等）：完全交给浏览器，不拦截、不缓存
+  if (url.origin !== self.location.origin) return;
+
+  // 同源：网络优先，成功则回写缓存；断网时用缓存兜底
   e.respondWith(
-    caches.match(e.request).then(function (r) {
-      return r || fetch(e.request).then(function (resp) {
+    fetch(req).then(function (resp) {
+      if (resp && resp.status === 200 && resp.type === 'basic') {
         var copy = resp.clone();
-        caches.open(CACHE).then(function (c) { c.put(e.request, copy); }).catch(function () { });
-        return resp;
-      }).catch(function () { return caches.match('./index.html'); });
+        caches.open(CACHE).then(function (c) { c.put(req, copy); }).catch(function () { });
+      }
+      return resp;
+    }).catch(function () {
+      return caches.match(req).then(function (r) {
+        return r || caches.match('./index.html');
+      });
     })
   );
 });
