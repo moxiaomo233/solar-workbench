@@ -87,7 +87,7 @@
   };
   Store.staleProjects = function () {
     return S.projects.filter(function (p) {
-      return ['grid', 'om'].indexOf(p.stage) < 0 && A.diffDays(A.today(), A.dkey(p.updatedAt)) > 7;
+      return A.stageKey(p.stage) !== 'om' && A.diffDays(A.today(), A.dkey(p.updatedAt)) > 7;
     });
   };
 
