@@ -6,7 +6,7 @@
   var dtab = 'overview';
 
   A.projectCardHTML = function (p, inBoard) {
-    var stale = ['grid', 'om'].indexOf(p.stage) < 0 && A.diffDays(A.today(), A.dkey(p.updatedAt)) > 7;
+    var stale = A.stageKey(p.stage) !== 'om' && A.diffDays(A.today(), A.dkey(p.updatedAt)) > 7;
     var statusTag = p.status === 'risk' ? '<span class="tag tag-warn">有风险</span>'
       : p.status === 'stalled' ? '<span class="tag tag-danger">已停滞</span>'
         : '<span class="tag tag-ok">正常推进</span>';
@@ -31,7 +31,7 @@
     var isNew = !proj;
     var p = proj ? A.clone(proj) : {
       name: '', short: '', owner: '', contactName: '', contactPhone: '', capacity: '',
-      stage: 'dev', status: 'normal', next: '', commission: '', milestone: { text: '', date: '' }, shared: true
+      stage: 'rec', status: 'normal', next: '', commission: '', milestone: { text: '', date: '' }, shared: true
     };
     var stageDict = {}; A.STAGES.forEach(function (s) { stageDict[s.k] = s.n; });
 
@@ -127,7 +127,7 @@
       if (st.view === 'board') {
         h += '<div class="small muted mb8">提示：拖动项目卡片可切换所处阶段</div><div class="board">';
         A.STAGES.forEach(function (s) {
-          var col = list.filter(function (p) { return p.stage === s.k; });
+          var col = list.filter(function (p) { return A.stageKey(p.stage) === s.k; });
           h += '<div class="board-col" data-stage="' + s.k + '">' +
             '<div class="bc-head"><span class="bc-dot" style="background:' + s.c + '"></span>' + s.n +
             '<span class="cnt">' + col.length + '</span></div>' +
@@ -241,7 +241,7 @@
           '<div><div class="card" style="padding:15px" >' +
           '<div class="s-t muted small">阶段推进</div>' +
           '<div class="mt10">' + A.STAGES.map(function (s, i) {
-            var cur = A.STAGES.findIndex(function (x) { return x.k === p.stage; });
+            var cur = A.STAGES.findIndex(function (x) { return x.k === A.stageKey(p.stage); });
             var done = i <= cur;
             return '<div class="flex center gap10" style="padding:5px 0;opacity:' + (done ? 1 : .45) + '">' +
               '<span style="width:11px;height:11px;border-radius:50%;background:' + (done ? s.c : '#cbd5e1') + '"></span>' +
@@ -249,7 +249,7 @@
               (i === cur ? '<span class="tag tag-info">当前</span>' : '') + '</div>';
           }).join('') + '</div>' +
           '<div class="mt10"><select class="sel" data-stage-sel>' + A.STAGES.map(function (s) {
-            return '<option value="' + s.k + '"' + (p.stage === s.k ? ' selected' : '') + '>切换到：' + s.n + '</option>';
+            return '<option value="' + s.k + '"' + (A.stageKey(p.stage) === s.k ? ' selected' : '') + '>切换到：' + s.n + '</option>';
           }).join('') + '</select></div></div>' +
           '<div class="card mt14" style="padding:15px"><div class="s-t muted small">预计提成（仅自己可见）</div>' +
           '<div class="s-v" style="font-size:22px;font-weight:700">' + A.money(p.commission || 0) + '</div></div>' +
