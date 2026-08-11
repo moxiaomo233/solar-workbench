@@ -41,7 +41,7 @@
 
   function quickEntries() {
     var raw = A.store.rawNotes();
-    var running = A.store.projects().filter(function (p) { return ['dev', 'filing', 'build'].indexOf(p.stage) >= 0; }).length;
+    var running = A.store.projects().filter(function (p) { return A.stageKey(p.stage) !== 'om'; }).length;
     var w = A.weekRange(A.today());
     var wDone = A.store.todos().filter(function (t) { return t.status === 'done' && t.doneAt && A.inRange(A.dkey(t.doneAt), w.start, w.end); }).length;
     var wAll = A.store.todos().filter(function (t) { return A.inRange(t.due, w.start, w.end) || (t.status === 'done' && t.doneAt && A.inRange(A.dkey(t.doneAt), w.start, w.end)); }).length;
