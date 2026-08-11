@@ -191,15 +191,24 @@ window.App = window.App || {};
   A.SRC = { boss: '老板交办', note: '随手记转入', self: '自拟', meeting: '会议产出', mate: '同事请求' };
   A.PRIO = { P0: 'P0紧急', P1: 'P1重要', P2: 'P2普通' };
   A.STATUS = { todo: '未开始', doing: '进行中', done: '已完成', cancel: '已取消' };
+  // 项目全生命周期 10 步流程（顺序即流转方向）
   A.STAGES = [
-    { k: 'dev', n: '开发中', c: '#2563eb' },
-    { k: 'filing', n: '备案中', c: '#7c3aed' },
-    { k: 'build', n: '施工中', c: '#f97316' },
-    { k: 'grid', n: '已并网', c: '#16a34a' },
-    { k: 'om', n: '运维中', c: '#0d9488' }
+    { k: 'rec', n: '项目推荐', c: '#3b82f6' },
+    { k: 'collect', n: '项目收资', c: '#0ea5e9' },
+    { k: 'quote', n: '设计报价', c: '#6366f1' },
+    { k: 'sign', n: '签约', c: '#8b5cf6' },
+    { k: 'filing', n: '建站备案', c: '#a855f7' },
+    { k: 'design', n: '电站设计', c: '#d946ef' },
+    { k: 'start', n: '开工申请', c: '#f59e0b' },
+    { k: 'build', n: '施工', c: '#f97316' },
+    { k: 'grid', n: '并网验收', c: '#22c55e' },
+    { k: 'om', n: '运维', c: '#14b8a6' }
   ];
-  A.stageName = function (k) { var s = A.STAGES.filter(function (x) { return x.k === k; })[0]; return s ? s.n : k; };
-  A.stageColor = function (k) { var s = A.STAGES.filter(function (x) { return x.k === k; })[0]; return s ? s.c : '#94a3b8'; };
+  // 旧阶段 key 兼容映射，保证已有项目不被改值也能正确归类显示
+  A.STAGE_ALIAS = { dev: 'rec' };
+  A.stageKey = function (k) { return (A.STAGE_ALIAS && A.STAGE_ALIAS[k]) || k; };
+  A.stageName = function (k) { k = A.stageKey(k); var s = A.STAGES.filter(function (x) { return x.k === k; })[0]; return s ? s.n : k; };
+  A.stageColor = function (k) { k = A.stageKey(k); var s = A.STAGES.filter(function (x) { return x.k === k; })[0]; return s ? s.c : '#94a3b8'; };
   A.ROLES = { owner: '屋顶业主', epc: 'EPC施工方', supplier: '设备供应商', grid: '电网对接人', gov: '政府部门', other: '其他' };
   A.LOGTYPE = { survey: '现场勘察', progress: '施工进度', issue: '问题记录', accept: '验收检查' };
   A.DOCTYPE = { contract: '合同', filing: '报批材料', tech: '技术方案', build: '施工文件', meeting: '会议纪要', other: '其他' };
